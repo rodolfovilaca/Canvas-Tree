@@ -1,4 +1,4 @@
-import React, { useState, useRef, useReducer, useEffect } from "react";
+import React, { useState, useRef, useReducer, useEffect, memo } from "react";
 import Konva from "konva";
 import { render } from "react-dom";
 import { Stage, Layer, Group } from "react-konva";
@@ -15,10 +15,7 @@ import "./style.css";
 
 // import { data } from "./mockData";
 
-function App() {
-  const refStage = useRef("stage");
-  const [showTooltip, setShowTooltip] = useState(false);
-
+const Content = memo(({ state, dispatch }) => {
   const expectedVertices = [
     { x: 170, y: 15 },
     { x: 180, y: 16 },
@@ -30,14 +27,45 @@ function App() {
   const leftHalf = [{ x: 173, y: 47 }, { x: 182, y: 43 }];
   const rightHalf = [{ x: 182, y: 43 }, { x: 194, y: 46 }];
   const full = [{ x: 173, y: 47 }, { x: 194, y: 46 }];
+  return (
+    <Group>
+      <Base />
+      {state.f.map((child, index) => {
+        const isLeft = index < state.f.length / 2;
+        return (
+          <Trunk
+            dispatch={dispatch}
+            color={colors[child.c]}
+            vertices={getPolygonVertices(
+              isLeft ? leftHalf : rightHalf,
+              getAngle(index, state.f.length, 90),
+              60
+            )}
+            children={child.f}
+            current={child}
+            deltaAngle={isLeft ? -45 : 45}
+            trunkIndex={2}
+          />
+        );
+      })}
+      <MainTrunk color={colors[state.c]} />
+    </Group>
+  );
+});
 
-  const children = Array.from(Array(4)).map((item, index) => ({}));
+function App() {
+  const refStage = useRef("stage");
+  const refLayer = useRef("layer");
+  const [showTooltip, setShowTooltip] = useState(false);
 
   // const generatedVertices = getPolygonVertices(parentVertices, -15);
   // console.log(generatedVertices);
 
   const angleSeed = 180;
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [scaleState, setScaleState] = useState(SCALE);
+  // useEffect(() => Object.keys(refLayer.current).length > 0 && refLayer.current.setScale({ x: scaleState, y: scaleState }), [scaleState]);
+
   // useEffect(
   //   () =>
   //     setTimeout(
@@ -51,34 +79,35 @@ function App() {
   //   []
   // );
   return (
-    <Stage ref={refStage} width={window.innerWidth} height={window.innerHeight}>
-      <Layer
-        scale={{ x: SCALE, y: SCALE }}
-        x={window.innerWidth / 2}
-        y={window.innerHeight / 2}
+    <div>
+      <button onClick={() => setScaleState(prevState => prevState + 1)}>
+        +
+      </button>
+      {scaleState}
+      <button
+        onClick={() =>
+          setScaleState(prevState =>
+            prevState > 1 ? prevState - 1 : prevState
+          )}
       >
-        <Base />
-        {state.f.map((child, index) => {
-          const isLeft = index < state.f.length / 2;
-          return (
-            <Trunk
-              dispatch={dispatch}
-              current={child}
-              color={colors[child.c]}
-              vertices={getPolygonVertices(
-                isLeft ? leftHalf : rightHalf,
-                getAngle(index, state.f.length, 90),
-                90
-              )}
-              children={child.f}
-              deltaAngle={isLeft ? -45 : 45}
-            />
-          );
-        })}
-        <MainTrunk color={colors[state.c]} setShowTooltip={setShowTooltip} />
-      </Layer>
-      <Tooltip visible={showTooltip} />
-    </Stage>
+        -
+      </button>
+      <Stage
+        ref={refStage}
+        width={window.innerWidth}
+        height={window.innerHeight} 
+      >
+        <Layer
+          ref={refLayer}
+          x={window.innerWidth / 2}
+          y={window.innerHeight / 2}
+          scale={{ x: scaleState, y: scaleState }}
+        >
+          <Content state={state} dispatch={dispatch} />
+        </Layer>
+        <Tooltip visible={showTooltip} />
+      </Stage>
+    </div>
   );
 }
 

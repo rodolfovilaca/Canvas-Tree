@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Konva from 'konva';
 import { Group } from "react-konva";
 import Leaf from "./Leaf";
 

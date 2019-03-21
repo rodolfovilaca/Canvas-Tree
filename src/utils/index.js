@@ -1,7 +1,7 @@
 const degToRad = Math.PI / 180;
 export const SCALE = 2;
-export const DISTANCE_BETWEEN_LEAFS_LEVELS = 15;
-export const QUANTITY_LEAFS_PER_LEVEL = 16;
+export const DISTANCE_BETWEEN_LEAFS_LEVELS = 8;
+export const QUANTITY_LEAFS_PER_LEVEL = 10;
 
 export const colors = {
   0: { dark: "#008ab2", light: "#7ad0f1" },
@@ -9,6 +9,10 @@ export const colors = {
   2: { dark: "#E48F3A", light: "#FDC844" },
   3: { dark: "#AE341B", light: "#DF4B28" }
 };
+
+export function isLeaf (item) {
+  return item && item.f.length === 0
+}
 
 export function rotateCoordinateInCenter(angle, point) {
   const rotatedPoint = {};

@@ -1,6 +1,8 @@
-import { data } from "../mockData";
+import { data } from "../data";
+// import { data } from "../mockData";
 
-export const initialState = data;
+export const initialState = data.data;
+// export const initialState = data;
 
 export function reducer(state, action) {
   switch (action.type) {

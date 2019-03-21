@@ -21,46 +21,49 @@ export default function Leaf({
     offsetX: 0,
     offsetY: 0
   });
+  const [opacity, setOpacity] = useState(0.5)
   const [currentRotation, setCurrentRotation] = useState(deltaAngle);
   const ref = useRef("leaf");
-  // useEffect(() => {
-  //   ref.current.on("mouseover", ev => {
-  //     setSelectedNode(item.index);
-  //   });
-  //   return () => {};
-  // }, []);
+  useEffect(() => {
+    ref.current.on("mouseenter", ev => {
+      ref.current.setOpacity(1);
+      ref.current.draw();
+    });
+    ref.current.on("mouseleave", ev => {
+      ref.current.setOpacity(0.5);
+      ref.current.draw();
+    });
+    return () => {};
+  }, []);
 
-  useEffect(
-    () => {
-      const node = ref.current;
-      // const centerPoint = { x: 0, y: -height / 2 };
-      // const current = rotatePoint(centerPoint, currentRotation);
-      // const rotated = rotatePoint(centerPoint, rotation);
-      // console.log(deltaAngle, rotation);
-      // const dx = rotated.x - current.x;
-      // const dy = rotated.y - current.y;
-      // setCurrentX(prevState => prevState - dx);
-      // setCurrentY(prevState => prevState - dy);
-      // setCurrentRotation(rotation);
+  useEffect(() => {
+    const node = ref.current;
+    // const centerPoint = { x: 0, y: -height / 2 };
+    // const current = rotatePoint(centerPoint, currentRotation);
+    // const rotated = rotatePoint(centerPoint, rotation);
+    // console.log(deltaAngle, rotation);
+    // const dx = rotated.x - current.x;
+    // const dy = rotated.y - current.y;
+    // setCurrentX(prevState => prevState - dx);
+    // setCurrentY(prevState => prevState - dy);
+    // setCurrentRotation(rotation);
 
-      // console.log(node);
-      const { height, width } = node.getClientRect();
-      setPosition({
-        offsetY: height / 2,
-        offsetX: width / 2
-      });
-      // console.log(node.setOffsetX(3));
-      // console.log(node.getOffsetX());
-      // setOffsetX(width / 2);
-      // setOffsetY(height / 2);
-      // setCurrentX(node.getX() + width / 2);
-      // setCurrentY(node.getY() + height / 2);
+    // console.log(node);
+    const { height, width } = node.getClientRect();
+    setPosition({
+      offsetY: height / 2,
+      offsetX: width / 2
+    });
+    // console.log(node.setOffsetX(3));
+    // console.log(node.getOffsetX());
+    // setOffsetX(width / 2);
+    // setOffsetY(height / 2);
+    // setCurrentX(node.getX() + width / 2);
+    // setCurrentY(node.getY() + height / 2);
 
-      node.rotate(rotation);
-      return () => {};
-    },
-    [rotation]
-  );
+    node.rotate(rotation);
+    return () => {};
+  }, [rotation]);
   // useEffect(
   //   () => {
   //     ref.current.rotate(rotation);
@@ -78,6 +81,7 @@ export default function Leaf({
       // offsetY={offsetY}
       // offsetX={offsetX}
       // rotation={deltaAngle}
+      opacity={opacity}
       {...position}
       stroke="white"
       strokeWidth={1}
