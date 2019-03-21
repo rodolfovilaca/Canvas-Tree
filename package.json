@@ -1,0 +1,27 @@
+{
+  "name": "react-konva-basic-demo",
+  "version": "0.0.1662",
+  "description": "Basic demo of using react with canvas element.",
+  "keywords": [
+    "canvas",
+    "konva",
+    "react"
+  ],
+  "homepage": "https://codesandbox.io/s/5m3nwp787x",
+  "main": "index.js",
+  "dependencies": {
+    "konva": "3.2.0",
+    "react": "16.8.4",
+    "react-dom": "16.8.4",
+    "react-konva": "16.8.4"
+  },
+  "devDependencies": {
+    "react-scripts": "1.0.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
