@@ -11,80 +11,65 @@ export default function Leaf({
   y,
   item,
   deltaAngle,
+  color,
+  leafScale,
   ...rest
 }) {
-  // const [currentX, setCurrentX] = useState(x);
-  // const [currentY, setCurrentY] = useState(y);
-  // const [offsetX, setOffsetX] = useState(0);
-  // const [offsetY, setOffsetY] = useState(0);
   const [position, setPosition] = useState({
     offsetX: 0,
     offsetY: 0
   });
-  const [opacity, setOpacity] = useState(0.5)
-  const [currentRotation, setCurrentRotation] = useState(deltaAngle);
   const ref = useRef("leaf");
+  const [opacity, setOpacity] = useState(0.5);
+  const [scale, setScale] = useState(leafScale);
   useEffect(() => {
     ref.current.on("mouseenter", ev => {
-      ref.current.setOpacity(1);
-      ref.current.draw();
+      setOpacity(1);
+      setScale(prevState => prevState + 0.2);
     });
     ref.current.on("mouseleave", ev => {
-      ref.current.setOpacity(0.5);
-      ref.current.draw();
+      setOpacity(0.5);
+      setScale(prevState => prevState - 0.2);
     });
     return () => {};
   }, []);
 
   useEffect(() => {
     const node = ref.current;
+    const { height, width } = node.getClientRect();
     // const centerPoint = { x: 0, y: -height / 2 };
-    // const current = rotatePoint(centerPoint, currentRotation);
-    // const rotated = rotatePoint(centerPoint, rotation);
-    // console.log(deltaAngle, rotation);
+    // const current = rotatePoint(centerPoint, Konva.getAngle(node.rotation()));
+    // const rotated = rotatePoint(centerPoint, Konva.getAngle(rotation));
     // const dx = rotated.x - current.x;
     // const dy = rotated.y - current.y;
-    // setCurrentX(prevState => prevState - dx);
-    // setCurrentY(prevState => prevState - dy);
-    // setCurrentRotation(rotation);
+    // setPosition({
+    //   x: x + dx,
+    //   y: y + dy,
+    //   rotation
+    // });
 
-    // console.log(node);
-    const { height, width } = node.getClientRect();
+    // console.log(height, width)
     setPosition({
-      offsetY: height / 2,
-      offsetX: width / 2
+      offsetY: 19 / 2,
+      offsetX: 8 / 2,
+      rotation
     });
-    // console.log(node.setOffsetX(3));
-    // console.log(node.getOffsetX());
-    // setOffsetX(width / 2);
-    // setOffsetY(height / 2);
-    // setCurrentX(node.getX() + width / 2);
-    // setCurrentY(node.getY() + height / 2);
 
-    node.rotate(rotation);
+    // node.setOffsetY(height / 2);
+    // node.setOffsetX(width / 2);
+    // node.rotation(rotation);
+    // node.draw();
+
     return () => {};
-  }, [rotation]);
-  // useEffect(
-  //   () => {
-  //     ref.current.rotate(rotation);
-  //     return () => {};
-  //   },
-  //   [currentRotation]
-  // );
+  }, []);
   return (
     <Path
       ref={ref}
       x={x}
       y={y}
-      // x={currentX}
-      // y={currentY}
-      // offsetY={offsetY}
-      // offsetX={offsetX}
-      // rotation={deltaAngle}
+      scale={{ x: scale, y: scale }}
       opacity={opacity}
       {...position}
-      stroke="white"
-      strokeWidth={1}
       fillLinearGradientStartPoint={{ x: 5.5, y: 5 }}
       fillLinearGradientEndPoint={{ x: 0, y: 5 }}
       data="M 4.496 19.631 L 8.59 15.557 L 8.59 7.875 L 4.496 0.542 L 0.411 7.875 L 0.423 15.673 L 4.496 19.631 Z "

@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import Konva from "konva";
-import { Shape, Group } from "react-konva";
+import { Group } from "react-konva";
 import IregularPolygon from "./IregularPolygon";
-import chunk from "lodash/chunk";
 import Leaf from "./Leaf";
 import {
   getAngle,
@@ -11,7 +9,6 @@ import {
   translateInDirection,
   DISTANCE_BETWEEN_LEAFS_LEVELS,
   QUANTITY_LEAFS_PER_LEVEL,
-  rotateCoordinateInCenter,
   isLeaf as leaf
 } from "../utils/index";
 
@@ -22,6 +19,7 @@ export default function Trunk({
   vertices,
   color,
   children = [],
+  setAttributes,
   trunkIndex
 }) {
   const [
@@ -34,53 +32,48 @@ export default function Trunk({
   let level = 0;
   let indexLeaf = 0;
   let perLevel = QUANTITY_LEAFS_PER_LEVEL;
-  console.log(trunkIndex);
   return (
     <Group>
       <IregularPolygon
-        onClick={() =>
+        onClick={() => {
+          setAttributes()
           dispatch({
             type: "drilldown",
             payload: current
-          })
-        }
+          });
+        }}
         color={color}
         vertices={vertices}
       />
       {children.map((child, index) => {
         const isLeaf = child.f.length === 0;
-        // if (leaf(current.f[0]))
-        //   console.log(chunk(current.f, QUANTITY_LEAFS_PER_LEVEL));
-        // console.log(perLevel);
+        let leafScale = 1;
+        let ADJUSTED_DISTANCE_BETWEEN_LEAFS_LEVELS = DISTANCE_BETWEEN_LEAFS_LEVELS;
+        if (current.f.length > 50) {
+          leafScale = 0.8;
+          ADJUSTED_DISTANCE_BETWEEN_LEAFS_LEVELS =
+            ADJUSTED_DISTANCE_BETWEEN_LEAFS_LEVELS - 2;
+        }
         if (isLeaf && indexLeaf % perLevel === 0) {
-          perLevel += 2*level;
+          perLevel += 2 * level;
           level += 1;
           indexLeaf = 0;
         }
 
-        const rotatedCoordinate = rotateCoordinateInCenter(
-          isLeaf ? level * 0 : 0,
-          {
-            x: Math.round((topLeftVertex.x + topRightVertex.x) / 2),
-            y: Math.round((topLeftVertex.y + topRightVertex.y) / 2)
-          }
-        );
-        
         const angle = getAngle(
           isLeaf ? indexLeaf : index,
           isLeaf ? perLevel : children.length,
-          isLeaf ? 200 : 90,
+          isLeaf ? 240 : 90,
           deltaAngle || 0
         );
 
         const coordinates = translateInDirection(
           angle,
-          // rotatedCoordinate,
           {
             x: Math.round((topLeftVertex.x + topRightVertex.x) / 2),
             y: Math.round((topLeftVertex.y + topRightVertex.y) / 2)
           },
-          DISTANCE_BETWEEN_LEAFS_LEVELS * level
+          ADJUSTED_DISTANCE_BETWEEN_LEAFS_LEVELS * level
         );
 
         indexLeaf += 1;
@@ -89,11 +82,10 @@ export default function Trunk({
             key={child.cpf}
             x={coordinates.x}
             y={coordinates.y}
-            // x={Math.round((topLeftVertex.x + topRightVertex.x) / 2)}
-            // y={Math.round((topLeftVertex.y + topRightVertex.y) / 2)}
             item={child}
             rotation={angle}
             deltaAngle={deltaAngle}
+            leafScale={leafScale}
             fillLinearGradientColorStops={[
               0,
               colors[child.c].light,
@@ -109,7 +101,7 @@ export default function Trunk({
             vertices={getPolygonVertices(
               parentEdge,
               angle,
-              Math.ceil((60 + child.f.length * 0.2)/trunkIndex)
+              Math.ceil((60 + child.f.length * 0.2) / trunkIndex)
             )}
             children={child.f}
             current={child}

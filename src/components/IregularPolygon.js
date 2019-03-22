@@ -7,21 +7,25 @@ export default function IregularPolygon({ vertices, color, onClick }) {
   useEffect(() => {
     const nodeDark = refDark.current;
     const nodeLight = refLight.current;
-    nodeDark.on("click", onClick);
-    nodeLight.on("click", onClick);
+    nodeDark.on("click", ev => {
+      ev.cancelBubble = true;
+      onClick();
+    });
+    nodeLight.on("click", ev => {
+      ev.cancelBubble = true;
+      onClick();
+    });
   }, []);
   const lightPart = vertices.slice(vertices.length / 2 - 1);
-  const darkPart = vertices.slice(0, vertices.length / 2 + 1);
+  const darkPart = [vertices[vertices.length - 1], ...vertices.slice(0, vertices.length / 2)]
   return (
     <Group>
       <Shape
         ref={refDark}
-        stroke="white"
-        strokeWidth={1}
         fill={color.dark}
         sceneFunc={(context, shape) => {
           context.beginPath();
-          vertices.forEach((item, index) => {
+          darkPart.forEach((item, index) => {
             if (index) {
               context.lineTo(item.x, item.y);
             } else {

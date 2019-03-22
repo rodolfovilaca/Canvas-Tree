@@ -1,7 +1,13 @@
 const degToRad = Math.PI / 180;
-export const SCALE = 2;
-export const DISTANCE_BETWEEN_LEAFS_LEVELS = 8;
+export const SCALE = 1;
+export const DISTANCE_BETWEEN_LEAFS_LEVELS = 6;
 export const QUANTITY_LEAFS_PER_LEVEL = 10;
+export const INITIAL_STAGE_ATTRS = {
+  scaleX: SCALE,
+  scaleY: SCALE,
+  x: 0,
+  y: 0
+}
 
 export const colors = {
   0: { dark: "#008ab2", light: "#7ad0f1" },
